@@ -1,0 +1,12 @@
+[Unit]
+Description=Gunicorn daemon for Django backend
+After=network.target
+
+[Service]
+User=admin
+Group=www-data
+WorkingDirectory=/home/admin/repos/backend/TechXplore/techxplore
+ExecStart=/home/admin/repos/backend/TechXplore/techxplore/venv/bin/gunicorn --workers 3 --bind 0.0.0.0:8000 techxplore.wsgi
+
+[Install]
+WantedBy=multi-user.target

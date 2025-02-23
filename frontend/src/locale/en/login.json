@@ -1,0 +1,15 @@
+{
+  "welcome": "Welcome",
+  "site": "tbcbank.ge",
+  "sec": "Security & privacy",
+  "contact": "Contact us",
+  "lang": "Eng",
+  "business": "BUSINESS",
+  "email": "Email",
+  "password": "Password",
+  "login": "Log In",
+  "log_easily": "Log in easily",
+  "scan": "Scan QR with camera or TBC mobilebank",
+  "email_err": "The email address you entered is not valid.",
+  "pass_error": "Your password must be at least 6 characters long"
+}
