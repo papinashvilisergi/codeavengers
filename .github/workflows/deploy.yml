@@ -1,0 +1,56 @@
+name: Django CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main  # Runs on pushes to the main branch
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🚀 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🛠 Set Up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: 📦 Install Dependencies
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install --upgrade pip
+          pip install -r backend/requirements.txt
+
+      - name: 🔍 Run Django Tests
+        env:
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          DEBUG: "False"
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          source venv/bin/activate
+          python backend/manage.py test
+
+  deploy:
+    needs: build-and-test  # Run only if tests pass
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🚀 Deploy to Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/repos/backend/TechXplore
+            git pull origin main
+            source venv/bin/activate
+            pip install -r requirements.txt
+            python manage.py migrate
+            python manage.py collectstatic --noinput
+            sudo systemctl restart gunicorn
+            sudo systemctl restart nginx
